@@ -1,3 +1,4 @@
+import { NonNullAssert } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -28,20 +29,37 @@ export class BasicPageComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.myForm.reset(rtx5090);
+    // this.myForm.reset(rtx5090);
   }
 
-  onSave(): void {
-    /* The line `if (this.myForm.invalid) return;` is checking if the form is invalid. If the form is
-    invalid, it will immediately return from the function without executing any further code. This
-    is typically used to prevent the form from being submitted or any further actions from being
-    taken if the form is not valid. */
-    if (this.myForm.invalid) return;
-    console.log(this.myForm.value);
-    /* `this.myForm.reset({price:10,inStorage:0});` is resetting the form to its initial state. It sets
-    the values of the form controls `price` and `inStorage` to 10 and 0 respectively. This is useful
-    for scenarios where you want to reset the form after it has been submitted or when you want to
-    clear the form values. */
-    this.myForm.reset({ price: 0, inStorage: 0 });
+  isValidField(field: string): boolean | null {
+    return (
+      /*  check if a specific form field has errors and has been touched by the user. */
+      this.myForm.controls[field].errors && this.myForm.controls[field].touched
+    );
   }
+
+  getFieldError(field: string): string | null {
+    if (!this.myForm.controls[field]) return null;
+
+    const errors = this.myForm.controls[field].errors || {};
+    for (const key of Object.keys(errors)) {
+      switch (key) {
+        case 'required':
+          return 'Este campo es requerido';
+        case 'minlength':
+          return `Mínimo ${errors['minlength'].requiredLength} characters`;
+      }
+    }
+
+    return null;
+  }
+
+/* The `onSave()` method is a function that is called when the user wants to save the form data. */
+  onSave(): void {
+    if (this.myForm.invalid) return;
+    this.myForm.markAllAsTouched();
+    return;
+  }
+
 }
