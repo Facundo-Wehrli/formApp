@@ -18,6 +18,35 @@ export class DynamicPageComponent {
     return this.myForm.get('favoriteGames') as FormArray;
   }
 
+  isValidField(field: string): boolean | null {
+    return (
+      /*  check if a specific form field has errors and has been touched by the user. */
+      this.myForm.controls[field].errors && this.myForm.controls[field].touched
+    );
+  }
+
+  getFieldError(field: string): string | null {
+    if (!this.myForm.controls[field]) return null;
+
+    const errors = this.myForm.controls[field].errors || {};
+    for (const key of Object.keys(errors)) {
+      switch (key) {
+        case 'required':
+          return 'Este campo es requerido';
+        case 'minlength':
+          return `Mínimo ${errors['minlength'].requiredLength} characters`;
+      }
+    }
+
+    return null;
+  }
+
+  ifValidFieldInArray(formArray: FormArray, index: number) {
+    return (
+      formArray.controls[index].errors && formArray.controls[index].touched
+    );
+  }
+
   constructor(private fb: FormBuilder) {}
 
   onSubmit(): void {
