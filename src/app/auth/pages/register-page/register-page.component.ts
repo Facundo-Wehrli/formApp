@@ -43,10 +43,12 @@ export class RegisterPageComponent {
     private emailValidator: EmailValidator
   ) {}
   isValidField(field: string) {
-    //TODO obtener validación de servicio
     return this.validatorsService.isValidField(this.myForm, field);
   }
 
+/**
+ * The onSubmit function marks all fields in the form as touched.
+ */
   onSubmit() {
     this.myForm.markAllAsTouched();
   }
